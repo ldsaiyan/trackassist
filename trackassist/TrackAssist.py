@@ -33,7 +33,7 @@ class TrackAssist():
         self.info = {}
         self.ip_set = set()
 
-        self.get_adress_url = "https://www.ipaddress.com/ipv4/{}"
+        self.get_info_url = "https://www.ipaddress.com/ipv4/{}"
         self.get_site_url = "https://site.ip138.com/{}/"
         self.get_beian_search_url = "https://www.beian88.com/home/Search"
         self.get_beian_d_url = "https://www.beian88.com/d/{}"
@@ -65,8 +65,8 @@ class TrackAssist():
             city_pattern = re.compile(r'IP City<\/th><td>(?:<i>)?(.*?)(?:<\/i>)?<\/td>')
             ptr_pattern = re.compile(r'PTR</abbr>\)</th><td><a[^>]+>(.+(?:\..+)*)<\/a>')
 
-            get_adress_url = self.get_adress_url.format(str(ip))
-            response = requests.get(get_adress_url, headers=headers, verify=False)
+            get_info_url = self.get_info_url.format(str(ip))
+            response = requests.get(get_info_url, headers=headers, verify=False)
             if response.status_code == 200:
                 org_pattern = r'Organization</th><td>(?:<i>)?(\w+)(?: </i>)?</td>'
                 organization = re.findall(org_pattern, response.text)
