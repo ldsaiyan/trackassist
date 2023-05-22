@@ -103,9 +103,7 @@ class TrackAssist():
             logger.info("[-] get_base() have something problem in {}".format(str(e)))
             return []
 
-
-
-    def get_site(self,ip):
+    def get_site(self, ip):
         # logger.info("[*] Load get_site")
         try:
             get_site_url = self.get_site_url.format(str(ip))
@@ -133,27 +131,24 @@ class TrackAssist():
             _ip = "\"" + ip + "\""
             nmap_result = []
             n = nmap.PortScanner()
-            # print("nmap_port for " + str(ip))
 
             n.scan(hosts=_ip,
-                   arguments="-sV -Pn -p 21,22,80,90,443,1433,1521,3306,3389,6379,7001,7002,8000,8080,8081,8888.8090,9000,9090,9200,50000,50030,50070")
+                   arguments="-sV -Pn -p 21,22,80,90,443,1433,1521,3306,3389,6379,7001,7002,8000,8080,8081,8888,8090,9000,9090,9200,50000,50030,50070")
             for x in n.all_hosts():
                 # if n[x].hostname() != "":
-                #     print("[+]HostName: " + n[x].hostname())
                 #     nmap_result.append(n[x].hostname())
                 for y in n[x].all_protocols():
-                    # print("[+]Protocols: " + y)
                     # nmap_result.append("[+]Protocols: " + y)
                     for z in n[x][y].keys():
                         if n[x][y][z]["state"] == "open":
                             # print("[+]port: " + str(z) + " | name: " + n[x][y][z]["name"] + " | state: " + n[x][y][z]["state"])
-                            port_message = "[+]port: " + str(z) + " | name: " + n[x][y][z]["name"] + " | state: " + \
+                            port_message = "[+]Port: " + str(z) + " | Name: " + n[x][y][z]["name"] + " | State: " + \
                                            n[x][y][z]["state"]
                             nmap_result.append(port_message)
                 self.info[ip]["nmap_result"] = nmap_result[:]
 
         except Exception as e:
-            logger.info("[-] pretreat() have something problem in {}".format(str(e)))
+            logger.info("[-] nmap_port() have something problem in {}".format(str(e)))
             return []
 
     def get_title(self, ip, site):
@@ -207,18 +202,20 @@ class TrackAssist():
     def get_whois(self, ip, site):
         # logger.info("[*] Load get_whois")
         try:
-            req = requests.post(self.get_whois_url, data={'domain': site}, headers=headers, verify=False)
-            json_data = json.loads(req.text)
-
-            if json_data['retcode'] == 0 and json_data['data']['owner_name'] != '':
-                whois_result = ["[+]域名所有者:" + json_data['data']['owner_name'],
-                                "[+]域名所有者邮箱:" + json_data['data']['owner_email'],
-                                "[+]域名所有者注册:" + json_data['data']['registrars']]
-                self.info[ip]["whois_result"] = whois_result[:]
+            pass
 
         except Exception as e:
             logger.info("[-] get_whois() have something problem in {}".format(str(e)))
             return []
+
+        req = requests.post(self.get_whois_url, data={'domain': site}, headers=headers, verify=False)
+        json_data = json.loads(req.text)
+
+        if json_data['retcode'] == 0 and json_data['data']['owner_name'] != '':
+            whois_result = ["[+]域名所有者:" + json_data['data']['owner_name'],
+                            "[+]域名所有者邮箱:" + json_data['data']['owner_email'],
+                            "[+]域名所有者注册:" + json_data['data']['registrars']]
+            self.info[ip]["whois_result"] = whois_result[:]
 
     def put_queue(self):
         try:
@@ -239,8 +236,8 @@ class TrackAssist():
 
     def build(self, ip):
         self.get_base(ip)
-        site = self.get_site(ip)
         self.nmap_port(ip)
+        site = self.get_site(ip)
         if site != None:
             self.get_title(ip, site)
             self.get_beian(ip, site)

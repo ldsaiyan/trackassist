@@ -3,6 +3,7 @@
 # @FILE     : Coroutine.py
 
 import time
+import warnings;warnings.filterwarnings("ignore")
 
 from gevent import monkey;monkey.patch_all()
 import gevent.queue
